@@ -18,7 +18,7 @@ spec:
         - name: ghcr-secret
       containers:
         - name: web
-          image: ghcr.io/ritchie229/argocd-jenkins-k8s-cicd:ver.35
+          image: ghcr.io/ritchie229/argocd-jenkins-k8s-cicd:ver.36
           imagePullPolicy: IfNotPresent
           env:
             - name: APP_NAME
