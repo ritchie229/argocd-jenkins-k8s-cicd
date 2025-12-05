@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argocd-jenkins-k8s-cicd
+  labels:
+    app: argocd-jenkins-k8s-cicd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: argocd-jenkins-k8s-cicd
+  template:
+    metadata:
+      labels:
+        app: argocd-jenkins-k8s-cicd
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: web
+          image: ghcr.io/ritchie229/argocd-jenkins-k8s-cicd:ver.32
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: APP_NAME
+              value: "Argocd-Jenkins-K8s"
+            - name: APP_VERSION
+              value: "ver.0.0.0"
+          ports:
+            - containerPort: 5000
+

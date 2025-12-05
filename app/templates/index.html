@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ app_name }}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="#">{{ app_name }}</a>
+      <span class="navbar-text">version {{ version }}</span>
+    </div>
+  </nav>
+
+  <main class="container py-5">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h1 class="card-title">Hello from {{ app_name }}</h1>
+        <p class="lead">This is a demo Flask app deployed with ArgoCD and built by Jenkins CI.</p>
+        <p>Image tag: <strong>{{ version }}</strong></p>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
+
