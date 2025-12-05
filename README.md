@@ -10,6 +10,32 @@ Demo project: Flask app + Jenkins CI + ArgoCD CD + GHCR image registry.
 - `smee.sh` - Webhook Deliveries tool adoption tool https://smee.io/
 - `create_repo.sh` - repository creation tool
 
+
+```bash
+argocd-jenkins-k8s-cicd/
+├── app
+│   ├── app.py
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   ├── static
+│   │   └── style.css
+│   ├── templates
+│   │   └── index.html
+│   └── tests
+│       └── test_app.py
+├── app-manifests
+│   ├── deployment.yaml
+│   ├── kustomization.yaml
+│   └── service.yaml
+├── argo_login.sh    -> argocd cli auth tool
+├── close_custom.sh  -> closing access to NodePorts
+├── createrepo.sh    -> for creating a GH repo
+├── Jenkinsfile
+├── open_ports.sh    -> opening access to the app NodePort
+├── README.md
+└── smee.sh          -> Webhook passing tool
+```
+
 ## Flow
 1. Developer pushes code to GitHub.
 2. Jenkins pipeline runs tests, static analysis (flake8), builds Docker image and pushes it to GitHub Container Registry (`ghcr.io/ritchie229/argocd-jenkins-k8s-cicd:ver.<BUILD_NUMBER>`).
@@ -38,8 +64,9 @@ git push
 4. Create a pipeline job pointing to repo; Jenkinsfile is in repo root:
    - New Item → Pipeline → Name: argocd-jenkins-k8s-cicd
    - Generic Webhook Trigger: 
-     -- Post content parameters:{'BRANCH:$.ref.split('/')[2]', 'COMMIT:$.after'}
+     -- Post content parameters:{'BRANCH:$.ref.split('/')[2]', 'COMMIT:$.after', 'commit_author:$.head_commit.committer.name'} (the last one for avoiding cyclic CICD)
      -- Token: <TOKEN> (see p.3)
+     -- Optional filter: {'text:$commit_author', expression:^((?!jenkins-ci).)*$'}
      -- Cause: Triggered by GitHub Webhook via smee.io (Optional and random)
    - Pipeline: Pipeline script from SCM:
      -- SCM: Git
