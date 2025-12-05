@@ -1,6 +1,6 @@
 # argocd-jenkins-k8s-cicd
-
-Demo project: Flask app + Jenkins CI + ArgoCD CD + GHCR image registry.
+Demo project: Flask app + Jenkins CI + ArgoCD CD + GHCR image registry.<br>
+https://youtu.be/N_DR-YAygIA 
 
 ## Repo layout
 - `app/` — Flask app, Dockerfile, tests, flake8 config
