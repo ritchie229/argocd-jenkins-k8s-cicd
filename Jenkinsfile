@@ -66,15 +66,15 @@ pipeline {
       steps {
         // we use a second credential for git (personal access token), stored as 'github-token'
         withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
-          sh """
-            git config user.email "jenkins@homelab.com"
-            git config user.name "jenkins-ci"
+          sh (
+            'git config user.email "jenkins@homelab.com" && ' +
+            'git config user.name "jenkins-ci" && ' +
             # update deployment.yaml image and APP_VERSION
             # backup original
             # cd ${MANIFEST_DIR}
 
-            git fetch origin
-            git checkout -B ${GIT_BRANCH} origin/${GIT_BRANCH}
+            'git fetch origin && ' +
+            'git checkout -B ' + env.GIT_BRANCH + ' origin/' + env.GIT_BRANCH + ' && ' +
             # git pull origin ${GIT_BRANCH}
 
             # Replace image tag line and APP_VERSION env var (works for simple structure)
@@ -89,26 +89,27 @@ pipeline {
 
 
             # Обновляем image
-            sed -i "s|^[[:space:]]*image:.*|  image: ${IMAGE_WITH_TAG}|" ${MANIFEST_DIR}/deployment.yaml
+            'sed -i \'s|^[[:space:]]*image:.*|  image: ' + env.IMAGE_WITH_TAG + '|\' ' + env.MANIFEST_DIR + '/deployment.yaml && ' 
 
 
             # Обновляем APP_VERSION
-            sed -i "/name: APP_VERSION/{n;s|^[[:space:]]*value:.*|  value: \\\"${IMAGE_TAG}\\\"|}" ${MANIFEST_DIR}/deployment.yaml
+            'sed -i \'/name: APP_VERSION/{n;s|^[[:space:]]*value:.*|  value: "' + env.IMAGE_TAG + '"|}\' ' + env.MANIFEST_DIR + '/deployment.yaml && ' +
+
             
 
  
 
 
-            cat ${MANIFEST_DIR}/deployment.yaml
+            'cat ' + env.MANIFEST_DIR + '/deployment.yaml && ' +
 
             # Commit & push
-            git add ${MANIFEST_DIR}/deployment.yaml
-            git commit -m "ci: update image to ${IMAGE_WITH_TAG} (build ${BUILD_NUMBER}) [ci skip]"
+            'git add ' + env.MANIFEST_DIR + '/deployment.yaml && ' +
+            'git commit -m "ci: update image to ' + env.IMAGE_WITH_TAG + ' (build ' env.BUILD_NUMBER + ') [ci skip]" && ' +
 
             # push via https using token
-            git remote set-url origin https://${GITHUB_TOKEN}@github.com/ritchie229/argocd-jenkins-k8s-cicd.git
-            git push origin ${GIT_BRANCH}
-          '''
+            'git remote set-url origin https://' + env.GITHUB_TOKEN + '@github.com/ritchie229/argocd-jenkins-k8s-cicd.git && ' +
+            'git push origin ' + env.GIT_BRANCH
+          )
         }
       }
     }
