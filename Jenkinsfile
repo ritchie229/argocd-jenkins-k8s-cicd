@@ -73,13 +73,13 @@ pipeline {
             'git fetch origin && ' +
             'git checkout -B ' + env.GIT_BRANCH + ' origin/' + env.GIT_BRANCH + ' && ' +
           
-            'sed -i \'s|^[[:space:]]*image:.*|  image: ' + env.IMAGE_WITH_TAG + '|\' ' + env.MANIFEST_DIR + '/deployment.yaml && ' 
+            'sed -i \'s|^[[:space:]]*image:.*|  image: ' + env.IMAGE_WITH_TAG + '|\' ' + env.MANIFEST_DIR + '/deployment.yaml && ' +
             'sed -i \'/name: APP_VERSION/{n;s|^[[:space:]]*value:.*|  value: "' + env.IMAGE_TAG + '"|}\' ' + env.MANIFEST_DIR + '/deployment.yaml && ' +
 
             'cat ' + env.MANIFEST_DIR + '/deployment.yaml && ' +
 
             'git add ' + env.MANIFEST_DIR + '/deployment.yaml && ' +
-            'git commit -m "ci: update image to ' + env.IMAGE_WITH_TAG + ' (build ' env.BUILD_NUMBER + ') [ci skip]" && ' +
+            'git commit -m "ci: update image to ' + env.IMAGE_WITH_TAG + ' (build ' + env.BUILD_NUMBER + ') [ci skip]" && ' +
 
             'git remote set-url origin https://' + env.GITHUB_TOKEN + '@github.com/ritchie229/argocd-jenkins-k8s-cicd.git && ' +
             'git push origin ' + env.GIT_BRANCH
