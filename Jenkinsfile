@@ -64,26 +64,25 @@ pipeline {
 
     stage('Update manifests and git push') {
       steps {
-        // we use a second credential for git (personal access token), stored as 'github-token'
         withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
-          sh (
-            'git config user.email "jenkins@homelab.com" && ' +
-            'git config user.name "jenkins-ci" && ' +
-          
-            'git fetch origin && ' +
-            'git checkout -B ' + env.GIT_BRANCH + ' origin/' + env.GIT_BRANCH + ' && ' +
-          
-            'sed -i \'s|^[[:space:]]*image:.*|  image: ' + env.IMAGE_WITH_TAG + '|\' ' + env.MANIFEST_DIR + '/deployment.yaml && ' +
-            'sed -i \'/name: APP_VERSION/{n;s|^[[:space:]]*value:.*|  value: "' + env.IMAGE_TAG + '"|}\' ' + env.MANIFEST_DIR + '/deployment.yaml && ' +
+          sh '''
+            git config user.email "jenkins@homelab.com"
+            git config user.name "jenkins-ci"
+  
+            git fetch origin
+            git checkout -B ${GIT_BRANCH} origin/${GIT_BRANCH}
 
-            'cat ' + env.MANIFEST_DIR + '/deployment.yaml && ' +
+            # Меняем всё после ver. на IMAGE_TAG (и для image, и для APP_VERSION)
+            sed -i "s|ver\\..*|${IMAGE_TAG}|g" ${MANIFEST_DIR}/deployment.yaml
 
-            'git add ' + env.MANIFEST_DIR + '/deployment.yaml && ' +
-            'git commit -m "ci: update image to ' + env.IMAGE_WITH_TAG + ' (build ' + env.BUILD_NUMBER + ') [ci skip]" && ' +
+            cat ${MANIFEST_DIR}/deployment.yaml
 
-            'git remote set-url origin https://' + env.GITHUB_TOKEN + '@github.com/ritchie229/argocd-jenkins-k8s-cicd.git && ' +
-            'git push origin ' + env.GIT_BRANCH
-          )
+            git add ${MANIFEST_DIR}/deployment.yaml
+            git commit -m "ci: update image and APP_VERSION to ${IMAGE_TAG} (build ${BUILD_NUMBER}) [ci skip]"
+
+            git remote set-url origin https://${GITHUB_TOKEN}@github.com/ritchie229/argocd-jenkins-k8s-cicd.git
+            git push origin ${GIT_BRANCH}
+          '''
         }
       }
     }
