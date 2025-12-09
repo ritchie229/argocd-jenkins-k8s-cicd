@@ -89,11 +89,9 @@ pipeline {
 
 
 
-            # Обновляем image
-            sed -i "s|^\(\s*image:\s*\).*|\1${IMAGE_WITH_TAG}|" ${MANIFEST_DIR}/deployment.yaml
+            sed -i 's|^\\(\\s*image:\\s*\\).*|\\1${IMAGE_WITH_TAG}|' ${MANIFEST_DIR}/deployment.yaml
+            sed -i '/name: APP_VERSION/{n;s|^\\(\\s*value:\\s*\\).*|\\1\"${IMAGE_TAG}\"|}' ${MANIFEST_DIR}/deployment.yaml
 
-            # Обновляем APP_VERSION
-            sed -i "/name: APP_VERSION/{n;s|^\(\s*value:\s*\).*|\1\"${IMAGE_TAG}\"|}" ${MANIFEST_DIR}/deployment.yaml
  
 
 
