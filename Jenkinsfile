@@ -66,7 +66,7 @@ pipeline {
       steps {
         // we use a second credential for git (personal access token), stored as 'github-token'
         withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
-          sh '''
+          sh """
             git config user.email "jenkins@homelab.com"
             git config user.name "jenkins-ci"
             # update deployment.yaml image and APP_VERSION
@@ -89,11 +89,11 @@ pipeline {
 
 
             # Обновляем image
-            sed -i 's|^[[:space:]]*image:.*|  image: '"${IMAGE_WITH_TAG}"'|' ${MANIFEST_DIR}/deployment.yaml
+            sed -i "s|^[[:space:]]*image:.*|  image: ${IMAGE_WITH_TAG}|" ${MANIFEST_DIR}/deployment.yaml
 
 
             # Обновляем APP_VERSION
-            sed -i '/name: APP_VERSION/{n;s|^[[:space:]]*value:.*|  value: "'"${IMAGE_TAG}"'"|}' ${MANIFEST_DIR}/deployment.yaml
+            sed -i "/name: APP_VERSION/{n;s|^[[:space:]]*value:.*|  value: \\\"${IMAGE_TAG}\\\"|}" ${MANIFEST_DIR}/deployment.yaml
             
 
  
