@@ -79,13 +79,24 @@ pipeline {
 
             # Replace image tag line and APP_VERSION env var (works for simple structure)
 
-            HOME=/tmp yq -i '.spec.template.spec.containers[0].image = "'${IMAGE_WITH_TAG}'"' ${MANIFEST_DIR}/deployment.yaml
-            HOME=/tmp yq -i '.spec.template.spec.containers[0].env[] |= (select(.name=="APP_VERSION") .value = "'${IMAGE_TAG}'")' ${MANIFEST_DIR}/deployment.yaml
+            # HOME=/tmp yq -i '.spec.template.spec.containers[0].image = "'${IMAGE_WITH_TAG}'"' ${MANIFEST_DIR}/deployment.yaml
+            # HOME=/tmp yq -i '.spec.template.spec.containers[0].env[] |= (select(.name=="APP_VERSION") .value = "'${IMAGE_TAG}'")' ${MANIFEST_DIR}/deployment.yaml
             
             # yq -i ".spec.template.spec.containers[0].image = \"${IMAGE_WITH_TAG}\"" ${MANIFEST_DIR}/deployment.yaml
             # yq -i '.spec.template.spec.containers[0].env[] |= (select(.name=="APP_VERSION") .value = strenv(IMAGE_TAG))' ${MANIFEST_DIR}/deployment.yaml
             # sed -i "s|image: .*|image: ${IMAGE_WITH_TAG}|" ${MANIFEST_DIR}/deployment.yaml
             # sed -i "s|name: APP_VERSION.*|$(printf 'name: APP_VERSION\n        value: "%s"' "$IMAGE_TAG")|" ${MANIFEST_DIR}/deployment.yaml
+
+
+
+            # Обновляем image
+            sed -i "s|^\(\s*image:\s*\).*|\1${IMAGE_WITH_TAG}|" ${MANIFEST_DIR}/deployment.yaml
+
+            # Обновляем APP_VERSION
+            sed -i "/name: APP_VERSION/{n;s|^\(\s*value:\s*\).*|\1\"${IMAGE_TAG}\"|}" ${MANIFEST_DIR}/deployment.yaml
+ 
+
+
             cat ${MANIFEST_DIR}/deployment.yaml
 
             # Commit & push
