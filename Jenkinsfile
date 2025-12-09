@@ -72,17 +72,13 @@ pipeline {
             'git checkout -B ' + env.GIT_BRANCH + ' origin/' + env.GIT_BRANCH + ' && ' +
 
         // 🔥 ЗАМЕНА ЛЮБОГО ver.X НА НОВЫЙ ver.${IMAGE_TAG}
-        //   'sed -i "s|ver\\.[0-9A-Za-z._-]*|ver.' + env.IMAGE_TAG + '|g" ' +
-        //    env.MANIFEST_DIR + '/deployment.yaml && ' +
-             
-             'sed -i "s/ver\\.[0-9A-Za-z._-]*/ver.' + env.IMAGE_TAG + '/g" deployment.yaml'
+        
 
-            // 'sed -i "s|ver\\..*|ver.' + env.IMAGE_TAG + '|g" ' +
-            //   env.MANIFEST_DIR + '/deployment.yaml'
+            'sed -i \'s/ver\\.[0-9A-Za-z._-]*/ver.' + env.IMAGE_TAG + '/g\' ' +
+              env.MANIFEST_DIR + '/deployment.yaml && ' +
 
 
-
-            'echo ==== UPDATED MANIFEST ==== && ' +
+            
             'cat ' + env.MANIFEST_DIR + '/deployment.yaml && ' +
    
             'git add ' + env.MANIFEST_DIR + '/deployment.yaml && ' +
