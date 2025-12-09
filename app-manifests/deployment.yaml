@@ -18,13 +18,13 @@ spec:
         - name: ghcr-secret
       containers:
         - name: web
-          image: ghcr.io/ritchie229/argocd-jenkins-k8s-cicd:ver.2
+          image: ghcr.io/ritchie229/argocd-jenkins-k8s-cicd:ver.27
           imagePullPolicy: IfNotPresent
           env:
             - name: APP_NAME
               value: "Argocd-Jenkins-K8s"
             - name: APP_VERSION
-              value: "ver.0"
+              value: "ver.27"
           ports:
             - containerPort: 5000
 
