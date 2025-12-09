@@ -79,8 +79,11 @@ pipeline {
 
             # Replace image tag line and APP_VERSION env var (works for simple structure)
             
-            sed -i "s|image: .*|image: ${IMAGE_WITH_TAG}|" ${MANIFEST_DIR}/deployment.yaml
-            sed -i "s|name: APP_VERSION.*|$(printf 'name: APP_VERSION\n        value: "%s"' "$IMAGE_TAG")|" ${MANIFEST_DIR}/deployment.yaml
+            yq -i ".spec.template.spec.containers[0].image = \"${IMAGE_WITH_TAG}\"" ${MANIFEST_DIR}/deployment.yaml
+            yq -i ".spec.template.spec.containers[0].env[] |= select(.name==\"APP_VERSION\").value=\"${IMAGE_TAG}\"" ${MANIFEST_DIR}/deployment.yaml
+
+            # sed -i "s|image: .*|image: ${IMAGE_WITH_TAG}|" ${MANIFEST_DIR}/deployment.yaml
+            # sed -i "s|name: APP_VERSION.*|$(printf 'name: APP_VERSION\n        value: "%s"' "$IMAGE_TAG")|" ${MANIFEST_DIR}/deployment.yaml
             cat ${MANIFEST_DIR}/deployment.yaml
 
             # Commit & push
