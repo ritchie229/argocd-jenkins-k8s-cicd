@@ -7,7 +7,7 @@ pipeline {
     GIT_REPO = "https://github.com/ritchie229/argocd-jenkins-k8s-cicd.git"
     MANIFEST_DIR = "app-manifests"
     IMAGE_TAG = "${env.BUILD_NUMBER}"
-    IMAGE_WITH_TAG = "${REPO}:${IMAGE_TAG}"
+    IMAGE_WITH_TAG = "${REPO}:ver.${IMAGE_TAG}"
     GIT_BRANCH = "${env.BRANCH ?: 'main'}"
     GIT_COMMIT = "${env.COMMIT ?: 'HEAD'}"
   }
