@@ -73,7 +73,7 @@ pipeline {
             git checkout -B ${GIT_BRANCH} origin/${GIT_BRANCH}
 
             # Меняем всё после ver. на IMAGE_TAG (и для image, и для APP_VERSION)
-            sed -i "s|ver\\..*|${IMAGE_TAG}|g" ${MANIFEST_DIR}/deployment.yaml
+            sed -i "s|ver\.[0-9A-Za-z._-]*|ver.${IMAGE_TAG}|g" ${MANIFEST_DIR}/deployment.yaml
 
             cat ${MANIFEST_DIR}/deployment.yaml
 

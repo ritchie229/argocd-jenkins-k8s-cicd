@@ -24,7 +24,7 @@ spec:
             - name: APP_NAME
               value: "Argocd-Jenkins-K8s"
             - name: APP_VERSION
-              value: "ver.0.0.0"
+              value: "ver.0"
           ports:
             - containerPort: 5000
 
