@@ -71,10 +71,10 @@ pipeline {
 
             git fetch origin
             git checkout -B ${GIT_BRANCH} origin/${GIT_BRANCH}
-
+            cat ${MANIFEST_DIR}/deployment.yaml
             # заменить только ver.<что-угодно> на ver.${IMAGE_TAG}
             sed -i "s/ver\\.[0-9A-Za-z._-]*/ver.${IMAGE_TAG}/g" ${MANIFEST_DIR}/deployment.yaml
- 
+            cat ${MANIFEST_DIR}/deployment.yaml
             git add ${MANIFEST_DIR}/deployment.yaml
             git commit -m "ci: update version to ver.${IMAGE_TAG} (build ${BUILD_NUMBER}) [ci skip]"
 
