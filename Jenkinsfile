@@ -69,44 +69,18 @@ pipeline {
           sh (
             'git config user.email "jenkins@homelab.com" && ' +
             'git config user.name "jenkins-ci" && ' +
-            # update deployment.yaml image and APP_VERSION
-            # backup original
-            # cd ${MANIFEST_DIR}
-
+          
             'git fetch origin && ' +
             'git checkout -B ' + env.GIT_BRANCH + ' origin/' + env.GIT_BRANCH + ' && ' +
-            # git pull origin ${GIT_BRANCH}
-
-            # Replace image tag line and APP_VERSION env var (works for simple structure)
-
-            # HOME=/tmp yq -i '.spec.template.spec.containers[0].image = "'${IMAGE_WITH_TAG}'"' ${MANIFEST_DIR}/deployment.yaml
-            # HOME=/tmp yq -i '.spec.template.spec.containers[0].env[] |= (select(.name=="APP_VERSION") .value = "'${IMAGE_TAG}'")' ${MANIFEST_DIR}/deployment.yaml
-            
-            # yq -i ".spec.template.spec.containers[0].image = \"${IMAGE_WITH_TAG}\"" ${MANIFEST_DIR}/deployment.yaml
-            # yq -i '.spec.template.spec.containers[0].env[] |= (select(.name=="APP_VERSION") .value = strenv(IMAGE_TAG))' ${MANIFEST_DIR}/deployment.yaml
-            # sed -i "s|image: .*|image: ${IMAGE_WITH_TAG}|" ${MANIFEST_DIR}/deployment.yaml
-            # sed -i "s|name: APP_VERSION.*|$(printf 'name: APP_VERSION\n        value: "%s"' "$IMAGE_TAG")|" ${MANIFEST_DIR}/deployment.yaml
-
-
-            # Обновляем image
+          
             'sed -i \'s|^[[:space:]]*image:.*|  image: ' + env.IMAGE_WITH_TAG + '|\' ' + env.MANIFEST_DIR + '/deployment.yaml && ' 
-
-
-            # Обновляем APP_VERSION
             'sed -i \'/name: APP_VERSION/{n;s|^[[:space:]]*value:.*|  value: "' + env.IMAGE_TAG + '"|}\' ' + env.MANIFEST_DIR + '/deployment.yaml && ' +
-
-            
-
- 
-
 
             'cat ' + env.MANIFEST_DIR + '/deployment.yaml && ' +
 
-            # Commit & push
             'git add ' + env.MANIFEST_DIR + '/deployment.yaml && ' +
             'git commit -m "ci: update image to ' + env.IMAGE_WITH_TAG + ' (build ' env.BUILD_NUMBER + ') [ci skip]" && ' +
 
-            # push via https using token
             'git remote set-url origin https://' + env.GITHUB_TOKEN + '@github.com/ritchie229/argocd-jenkins-k8s-cicd.git && ' +
             'git push origin ' + env.GIT_BRANCH
           )
