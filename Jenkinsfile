@@ -79,8 +79,8 @@ pipeline {
 
             # Replace image tag line and APP_VERSION env var (works for simple structure)
             sed -i "s|image: .*|image: ${IMAGE_WITH_TAG}|" ${MANIFEST_DIR}/deployment.yaml
-            sed -i "s|value: \"ver.*\"|value: \"${IMAGE_TAG}\"|" ${MANIFEST_DIR}/deployment.yaml
-     
+            sed -i "s|name: APP_VERSION.*|name: APP_VERSION\n        value: \"${IMAGE_TAG}\"|" ${MANIFEST_DIR}/deployment.yaml 
+            # sed -i "s|value: \".*\"$|value: \"${IMAGE_TAG}\"|"  ${MANIFEST_DIR}/deployment.yaml || true
             # Commit & push
             git add ${MANIFEST_DIR}/deployment.yaml
             git commit -m "ci: update image to ${IMAGE_WITH_TAG} (build ${BUILD_NUMBER}) [ci skip]"

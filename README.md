@@ -67,7 +67,7 @@ git push
    - Generic Webhook Trigger: 
      -- Post content parameters:{'BRANCH:$.ref.split('/')[2]', 'COMMIT:$.after', 'commit_author:$.head_commit.committer.name'} (the last one for avoiding cyclic CICD)
      -- Token: <TOKEN> (see p.3)
-     -- Optional filter: {'text:$commit_author', expression:^((?!jenkins-ci).)*$'}
+     -- Optional filter: {'text:${commit_author}', expression:^((?!jenkins-ci).)*$'}
      -- Cause: Triggered by GitHub Webhook via smee.io (Optional and random)
    - Pipeline: Pipeline script from SCM:
      -- SCM: Git
