@@ -61,28 +61,31 @@ pipeline {
         }
       }
     }
-
     stage('Update manifests and git push') {
       steps {
         withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
-          sh '''
-            git config user.email "jenkins@homelab.com"
-            git config user.name "jenkins-ci"
-  
-            git fetch origin
-            git checkout -B ${GIT_BRANCH} origin/${GIT_BRANCH}
+          sh(
+            'git config user.email "jenkins@homelab.com" && ' +
+            'git config user.name "jenkins-ci" && ' +
 
-            # Меняем всё после ver. на IMAGE_TAG (и для image, и для APP_VERSION)
-            sed -i "s|ver\.[0-9A-Za-z._-]*|ver.${IMAGE_TAG}|g" ${MANIFEST_DIR}/deployment.yaml
+            'git fetch origin && ' +
+            'git checkout -B ' + env.GIT_BRANCH + ' origin/' + env.GIT_BRANCH + ' && ' +
 
-            cat ${MANIFEST_DIR}/deployment.yaml
+        // 🔥 ЗАМЕНА ЛЮБОГО ver.X НА НОВЫЙ ver.${IMAGE_TAG}
+            'sed -i "s|ver\\.[0-9A-Za-z._-]*|ver.' + env.IMAGE_TAG + '|g" ' +
+              env.MANIFEST_DIR + '/deployment.yaml && ' +
 
-            git add ${MANIFEST_DIR}/deployment.yaml
-            git commit -m "ci: update image and APP_VERSION to ${IMAGE_TAG} (build ${BUILD_NUMBER}) [ci skip]"
+            'echo ==== UPDATED MANIFEST ==== && ' +
+            'cat ' + env.MANIFEST_DIR + '/deployment.yaml && ' +
+   
+            'git add ' + env.MANIFEST_DIR + '/deployment.yaml && ' +
+            'git commit -m "ci: update version to ver.' + env.IMAGE_TAG +
+              ' (build ' + env.BUILD_NUMBER + ') [ci skip]" && ' +
 
-            git remote set-url origin https://${GITHUB_TOKEN}@github.com/ritchie229/argocd-jenkins-k8s-cicd.git
-            git push origin ${GIT_BRANCH}
-          '''
+            'git remote set-url origin https://' + env.GITHUB_TOKEN +
+              '@github.com/ritchie229/argocd-jenkins-k8s-cicd.git && ' +
+            'git push origin ' + env.GIT_BRANCH
+          )
         }
       }
     }
