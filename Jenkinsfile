@@ -4,10 +4,11 @@ pipeline {
   environment {
 
     REPO = "ghcr.io/ritchie229/argocd-jenkins-k8s-cicd"
+    DH_REPO = "ritchie229/argocd-jenkins-k8s-cicd"
     GIT_REPO = "https://github.com/ritchie229/argocd-jenkins-k8s-cicd.git"
     MANIFEST_DIR = "app-manifests"
     IMAGE_TAG = "${env.BUILD_NUMBER}"
-    IMAGE_WITH_TAG = "${REPO}:ver.${IMAGE_TAG}"
+    IMAGE_WITH_TAG = "${DH_REPO}:ver.${IMAGE_TAG}"
     GIT_BRANCH = "${env.BRANCH ?: 'main'}"
     GIT_COMMIT = "${env.COMMIT ?: 'HEAD'}"
   }
@@ -54,9 +55,9 @@ pipeline {
     stage('Docker login and push') {
       steps {
         withCredentials([
-          usernamePassword(credentialsId: 'ghcr-creds', usernameVariable: 'GH_USER', passwordVariable: 'GH_TOKEN')
+          usernamePassword(credentialsId: 'dh-creds', usernameVariable: 'DH_USER', passwordVariable: 'DH_TOKEN')
         ]) {
-          sh "echo $GH_TOKEN | docker login ghcr.io -u $GH_USER --password-stdin"
+          sh "echo $DH_TOKEN | docker login -u $DH_USER --password-stdin"
           sh "docker push ${IMAGE_WITH_TAG}"
         }
       }
